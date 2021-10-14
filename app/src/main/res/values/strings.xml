@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Bulksms</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="description">Get your Bulk SMS messages across to target audience of any of these
+    countries Nigeria,Ghana and Cote d\'Ivoire with instant delivery at low rate</string>
+</resources>
