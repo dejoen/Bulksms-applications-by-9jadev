@@ -36,7 +36,7 @@ private int mPosition=0;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
        initializeViews();
-       //testing
+
     }
     private void  initializeViews(){
         view=findViewById(R.id.view);
