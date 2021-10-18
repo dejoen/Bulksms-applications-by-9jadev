@@ -1,19 +1,32 @@
 package com.example.bulksms.fragments;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.bulksms.R;
+import com.example.bulksms.activities.HomeActivity;
 import com.example.bulksms.activities.RegistrationActivity;
+import com.example.bulksms.models.Logintem;
+import com.example.bulksms.models.loginModel;
+import com.example.bulksms.webApi.ApiClient;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -21,7 +34,12 @@ import com.example.bulksms.activities.RegistrationActivity;
  * create an instance of this fragment.
  */
 public class SignInFragment extends Fragment {
-
+    TextView signUp,forgetPass;
+    Button signupBut;
+    EditText userName,userPassword;
+       Logintem logintem;
+       ProgressBar progressBar;
+boolean isLoginSuccessful;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -65,9 +83,7 @@ public class SignInFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        TextView signUp,forgetPass;
-        Button signupBut;
-        EditText userName,userPassword;
+
 
         // Inflate the layout for this fragment
         View v=inflater.inflate(R.layout.fragment_sign_in, container, false);
@@ -76,13 +92,56 @@ public class SignInFragment extends Fragment {
         signupBut=v.findViewById(R.id.singInBut);
         userName=v.findViewById(R.id.username);
         userPassword=v.findViewById(R.id.password);
+        progressBar=v.findViewById(R.id.progressB);
+        progressBar.setVisibility(View.GONE);
+
         signUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getContext().startActivity(new Intent(getContext(), RegistrationActivity.class));
             }
         });
+signupBut.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+    progressBar.setVisibility(View.VISIBLE);
+        login();
+logintem.getT(progressBar);
+logintem.getActivity(getActivity());
 
+    }
+});
         return v;
+    }
+    private  void login(){
+        String name=userName.getText().toString();
+        String pass=userPassword.getText().toString();
+        if(TextUtils.isEmpty(name)){
+            Toast.makeText(getContext(), "please enter name", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(TextUtils.isEmpty(pass)){
+            Toast.makeText(getContext(), "please enter password ", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(TextUtils.isEmpty(pass) &(TextUtils.isEmpty(name))){
+            Toast.makeText(getContext(), "please enter details  ", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // new loginModel(name,pass);
+
+   logintem=new Logintem(name,pass,getContext());
+
+
+    }
+
+    public ProgressBar getProgressBar() {
+
+        return progressBar;
+    }
+
+    public  void isLoginSuccessful(boolean opt){
+        isLoginSuccessful=opt;
     }
 }

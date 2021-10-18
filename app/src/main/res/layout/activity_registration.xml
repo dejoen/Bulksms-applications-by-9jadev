@@ -11,7 +11,7 @@
         app:cardCornerRadius="20dp"
         android:elevation="10dp"
 
-        app:cardBackgroundColor="@color/bt"
+        app:cardBackgroundColor="@color/cyan"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="16dp"
@@ -29,15 +29,33 @@
 android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="10dp">
+            android:padding="6dp">
 
 
             <EditText
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="15dp"
+                android:id="@+id/Recname"
+                android:layout_width="match_parent"
+                android:layout_height="38dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:background="@drawable/edittextdes"
+                android:ems="10"
+                android:hint="Enter name"
+                android:inputType="textPersonName"
+                android:paddingStart="5dp"
+                android:paddingLeft="5dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:textCursorDrawable="@color/bt" />
+            <EditText
+            android:layout_marginTop="6dp"
                 android:id="@+id/Recusername"
                 android:layout_width="match_parent"
                 android:layout_height="38dp"
                 android:layout_marginStart="8dp"
+                android:layout_below="@id/Recname"
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
                 android:background="@drawable/edittextdes"
@@ -90,18 +108,18 @@ android:gravity="center"
             <EditText
                 android:background="@drawable/edittextdes"
                 android:layout_below="@id/Recconpassword"
-                android:id="@+id/editTextPhoneNum"
+                android:id="@+id/editTextEmail"
                 android:layout_width="match_parent"
                 android:layout_marginEnd="10dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="8dp"
-                android:hint="Enter number"
+                android:hint="Enter Email"
                 android:paddingStart="6dp"
                 android:textColor="@color/black"
                 android:textColorHint="@color/black"
                 android:layout_height="38dp"
                 android:ems="10"
-                android:inputType="phone"
+                android:inputType="textEmailAddress"
                 android:paddingLeft="6dp" />
 
             <EditText
@@ -113,7 +131,7 @@ android:gravity="center"
                 android:textColor="@color/black"
                 android:textColorHint="@color/black"
                 android:background="@drawable/edittextdes"
-                android:layout_below="@id/editTextPhoneNum"
+                android:layout_below="@id/editTextEmail"
                 android:id="@+id/editTextTextEmailAddress"
                 android:layout_width="match_parent"
                 android:layout_height="38dp"
@@ -132,7 +150,7 @@ android:gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/editTextTextEmailAddress"
-                android:layout_marginTop="26dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginLeft="10dp" />
 
             <RelativeLayout
@@ -140,7 +158,7 @@ android:gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/RecsingInBut"
-                android:layout_marginTop="27dp"
+                android:layout_marginTop="1dp"
                 >
 
                 <TextView

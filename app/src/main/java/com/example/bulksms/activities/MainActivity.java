@@ -19,10 +19,12 @@ import com.example.bulksms.R;
 import com.example.bulksms.adapter.CustomPagerAdapter;
 import com.example.bulksms.fragments.SignInFragment;
 import com.example.bulksms.models.CustomViewModel;
+import com.example.bulksms.models.Logintem;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+
 private ViewPager viewPager;
 View view;
 FrameLayout frameLayout;
@@ -36,7 +38,6 @@ private int mPosition=0;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
        initializeViews();
-
     }
     private void  initializeViews(){
         view=findViewById(R.id.view);
@@ -78,13 +79,14 @@ addIndicator(0);
                  viewPager.setCurrentItem(getPosition()+1,true);
                  count++;
                  if(count==arrayList.size()+1){
+                     addFragment(new SignInFragment());
                      view.setVisibility(View.GONE);
                      viewPager.setVisibility(View.GONE);
                      indicatorLayout.setVisibility(View.GONE);
                     moveNext.setVisibility(View.GONE);
                      frameLayout.setVisibility(View.VISIBLE);
 
-                     addFragment(new SignInFragment());
+
                  }
 
              }
