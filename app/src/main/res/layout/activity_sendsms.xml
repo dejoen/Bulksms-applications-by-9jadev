@@ -1,0 +1,210 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bulksmso3.jpg" >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="12dp"
+        android:background="@drawable/send_sms_design.xml"
+        android:elevation="20dp" >
+
+        <TextView
+            android:id="@+id/registeridT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="6dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:text="Sender&apos;s id"
+            android:textColor="#ff000000"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editTextId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/registeridT"
+            android:background="res/drawable/send_sms_design.xml"
+            android:hint="sender&apos;s id"
+            android:padding="5dp"
+            android:textColorHint="#ff000000" />
+
+        <CheckBox
+            android:id="@+id/registerId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/editTextId"
+            android:backgroundTint="ff000"
+            android:text="register id"
+            android:textColor="#ff000000" />
+
+        <TextView
+            android:id="@+id/recepientText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="6dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/registerId"
+            android:text="Recipient(s)"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editTextRep"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/recepientText"
+            android:background="@drawable/send_sms_design.xml"
+            android:gravity="top|center_vertical"
+            android:hint="Enter recipient&apos;s number"
+            android:padding="5dp"
+            android:textAlignment="viewStart"
+            android:textColorHint="@color/black" />
+
+        <TextView
+            android:id="@+id/addB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="6dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/editTextRep"
+            android:text="add bulk numbers from file"
+            android:textColor="#ff000000"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/addBulkEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/addB"
+            android:background="res/drawable/send_sms_design.xml"
+            android:hint="Enter recipient&apos;s number"
+            android:padding="5dp"
+            android:textColorHint="@color/black" />
+
+        <TextView
+            android:id="@+id/sendText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="6dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/addBulkEdit"
+            android:text="Send sms"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/sendSmsEdit"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toTopOf="@id/numberPages"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/sendText"
+            android:background="@drawable/send_sms_design.xml"
+            android:gravity="top|center_vertical"
+            android:hint="type your message here"
+            android:padding="5dp"
+            android:textAlignment="viewStart"
+            android:textColorHint="@color/black" />
+
+        <TextView
+            android:id="@+id/numberPages"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toTopOf="@id/useNormalRC"
+            app:layout_constraintStart_toStartOf="parent"
+            android:text="number of pages:1"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/sendMB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:background="@color/purple_500"
+            android:text="Send message"
+            android:textAllCaps="false"
+            android:textColor="#ffffffff" />
+
+        <CheckBox
+            android:id="@+id/corporateC"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toTopOf="@id/sendMB"
+            app:layout_constraintStart_toStartOf="parent"
+            android:text="use corporate"
+            android:textColor="@color/black"
+            android:textSize="12sp" />
+
+        <CheckBox
+            android:id="@+id/sendLaterC"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"
+            android:layout_marginEnd="22dp"
+            app:layout_constraintBottom_toTopOf="@id/sendMB"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:text="Send later"
+            android:textColor="@color/black"
+            android:textSize="12sp" />
+
+        <CheckBox
+            android:id="@+id/useNormalRC"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toTopOf="@id/corporateC"
+            app:layout_constraintStart_toStartOf="parent"
+            android:text="Use normal route"
+            android:textColor="@color/black"
+            android:textSize="12sp" />
+
+        <CheckBox
+            android:id="@+id/saveC"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="48dp"
+            app:layout_constraintBottom_toTopOf="@id/sendLaterC"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:text="Save"
+            android:textColor="#0"
+            android:textSize="12sp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
