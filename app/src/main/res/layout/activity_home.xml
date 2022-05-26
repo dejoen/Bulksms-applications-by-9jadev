@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+
+    android:layout_height="match_parent"
+    android:background="@drawable/bulksmso3">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/das">
+            <TextView
+                android:id="@+id/mwelCome"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:gravity="center"
+                android:layout_toStartOf="@id/myWallet"
+                android:layout_marginLeft="6dp"
+                android:layout_marginTop="6dp"
+                android:text="fund wallet >"
+                android:textColor="@color/white"
+                android:textSize="16dp"
+                android:layout_toLeftOf="@id/myWallet" />
+
+            <ImageView
+                android:id="@+id/myWallet"
+                android:layout_width="40dp"
+                android:layout_height="30dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="6dp"
+                android:layout_marginEnd="7dp"
+                android:layout_marginRight="7dp"
+                android:src="@drawable/ic_baseline_account_balance_wallet_24" />
+
+            <TextView
+                android:id="@+id/welCome"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:gravity="center"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="6dp"
+                android:layout_marginTop="6dp"
+                android:text="Hello welcome"
+                android:textColor="@color/white"
+                android:textSize="18dp" />
+
+            <ImageView
+                android:id="@+id/mIcon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_below="@id/welCome"
+                android:layout_marginLeft="6dp"
+                android:src="@drawable/ic_baseline_account_circle_24" />
+
+            <TextView
+                android:id="@+id/userName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/welCome"
+                android:layout_marginLeft="6dp"
+                android:layout_marginTop="6dp"
+                android:layout_toEndOf="@id/mIcon"
+                android:layout_toRightOf="@id/mIcon"
+                android:text="Dejoe"
+                android:textColor="@color/white"
+                android:textSize="16dp" />
+
+            <ImageView
+                android:id="@+id/mWallet"
+                android:layout_width="40dp"
+                android:layout_height="30dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="6dp"
+                android:layout_marginBottom="10dp"
+                android:src="@drawable/ic_baseline_account_balance_wallet_24" />
+
+            <ProgressBar
+                android:id="@+id/loadBar"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="12dp"
+                android:layout_toEndOf="@id/mWallet"
+                android:layout_toRightOf="@id/mWallet"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/userAmount"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="6dp"
+                android:layout_marginBottom="12dp"
+                android:layout_toEndOf="@id/mWallet"
+                android:layout_toRightOf="@id/mWallet"
+                android:gravity="center"
+                android:text="30,000"
+                android:textColor="@color/white"
+                android:textSize="16dp" />
+
+            <TextView
+                android:id="@+id/mmwelCome"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:gravity="center"
+               android:layout_alignParentEnd="true"
+                android:layout_marginLeft="6dp"
+                android:layout_marginTop="50dp"
+                android:text="log out"
+                android:layout_marginEnd="6dp"
+                android:textColor="@color/white"
+                android:textSize="16dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="6dp" />
+            <ImageView
+                android:id="@+id/logout"
+                android:layout_alignParentEnd="true"
+                android:layout_width="40dp"
+                android:layout_height="30dp"
+                android:layout_marginEnd="8dp"
+                android:layout_below="@id/mmwelCome"
+                android:src="@drawable/ic_baseline_visibility_off_24"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="8dp" />
+
+
+        </RelativeLayout>
+
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="10dp"
+        app:cardCornerRadius="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appbar">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/itemRec"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </androidx.cardview.widget.CardView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

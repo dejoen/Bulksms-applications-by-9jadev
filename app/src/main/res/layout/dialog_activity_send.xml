@@ -1,0 +1,111 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="500dp"
+    android:background="@drawable/bulksmso3"
+    android:gravity="center_vertical|center|center_horizontal" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="15dp"
+        android:background="@drawable/send_sms_design" >
+
+        <TextView
+            android:id="@+id/T"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:padding="3dp"
+            android:text="Note: the use of banks,organization like waec, neco,jamb is strickly forbidden.  "
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/regIdDialog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/T"
+            android:layout_margin="6dp"
+            android:background="@drawable/send_sms_design"
+            android:hint="enter your id"
+            android:padding="4dp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black" />
+
+        <EditText
+            android:id="@+id/regBussinessDialog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/regIdDialog"
+            android:layout_margin="6dp"
+            android:background="@drawable/send_sms_design"
+            android:gravity="top|center_vertical"
+            android:hint="a valid message to be attached to id"
+            android:padding="4dp"
+            android:textAlignment="viewStart"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black" />
+
+        <EditText
+            android:id="@+id/messageDialog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/regBussinessDialog"
+            android:layout_margin="6dp"
+            android:background="@drawable/send_sms_design"
+            android:gravity="top|center_vertical"
+            android:hint="a valid name of the business that owns the id."
+            android:padding="4dp"
+            android:textAlignment="viewStart"
+            android:textColorHint="@color/black" />
+
+        <EditText
+            android:id="@+id/govIdDialog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/messageDialog"
+            android:layout_margin="6dp"
+            android:background="@drawable/send_sms_design"
+            android:gravity="top|center_vertical"
+            android:hint="government issued id of the business or NIN"
+            android:padding="4dp"
+            android:textAlignment="viewStart"
+            android:textColorHint="@color/black" />
+
+        <EditText
+            android:id="@+id/buAddressDialog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/govIdDialog"
+            android:layout_margin="6dp"
+            android:background="@drawable/send_sms_design"
+            android:hint="a valid address of bussiness"
+            android:padding="4dp"
+            android:textColor="@color/black" />
+
+        <Button
+            android:id="@+id/cancelDialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="6dp"
+            android:layout_marginStart="6dp"
+            android:text="cancel"
+            android:textAllCaps="false"
+            android:textColorHint="@color/black" />
+
+        <Button
+            android:id="@+id/registerButtonDialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="6dp"
+            android:layout_marginEnd="6dp"
+            android:text="register"
+            android:textAllCaps="false" />
+    </RelativeLayout>
+
+</LinearLayout>

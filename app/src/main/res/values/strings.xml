@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Bulksms-applications-by-9jadev</string>
+	<string name="hello_blank_fragment">Hello blank fragment</string>
+	<string name="description">Get your Bulk SMS messages across to target audience of any of these
+	countries Nigeria,Ghana and Cote d\'Ivoire with instant delivery at low rate</string>
+	<string name="apiKey">zJmujUQkZvFzFjcSaqFZ2jvN1b846xGvo3SEAtCLXP4pPjl2C6SZhE4uJq5nSYhdOA8rZpiXCFx3o756M1752vxOK8Fcj5OImHBn</string>
+</resources>
