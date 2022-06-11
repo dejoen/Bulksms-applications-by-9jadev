@@ -1,6 +1,10 @@
 package com.example.bulksms.activities;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextUtils;
@@ -8,9 +12,17 @@ import android.text.TextWatcher;
 import android.text.method.KeyListener;
 import android.view.View;
 import android.view.KeyEvent;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 import android.os.Bundle;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import com.example.bulksms.LocalDataBase.StoreSaveFileDb;
 import com.example.bulksms.R;
 
 import android.content.Intent;
@@ -20,23 +32,38 @@ import androidx.activity.result.ActivityResultLauncher;
 import android.app.Dialog;
 import android.widget.CheckBox;
 import android.widget.Button;
+import com.example.bulksms.Utils.CSVClass;
 import com.example.bulksms.Utils.ForbiddenWords;
 import android.widget.EditText;
 import androidx.appcompat.app.AppCompatActivity;
+import com.example.bulksms.adapters.SaveItemAdapter;
+import com.example.bulksms.models.CsvModel;
 import com.example.bulksms.models.RegisterIdResponse;
+import com.example.bulksms.models.SaveFileClass;
 import com.example.bulksms.models.SendSmSResponse;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import retrofit2.Response;
 import retrofit2.Callback;
 import com.example.bulksms.webApi.ApiClient;
 import retrofit2.Call;
+import android.Manifest.*;
+
 
 public class SendSMSActivity extends AppCompatActivity {
 	ApiClient apiClient;
 	String apiKey = "";
 	EditText bulkEdit;
 	Button buttonSms;
-	CheckBox corporateC;
-	Dialog dialog;
+	CheckBox corporateC, getSavedFileC;
+	Dialog dialog, openSaveDialog, openSavedFileDialog;
 	String id;
 	KeyListener listener;
 	boolean isCChecked = false;
@@ -54,7 +81,12 @@ public class SendSMSActivity extends AppCompatActivity {
 	SharedPreferences sharedPref;
 	EditText smsEdit;
 	CheckBox useNormalRoute;
-
+	ArrayList<SaveFileClass> saveFileList;
+	SharedPreferences sharedPreferences;
+	StoreSaveFileDb storeSaveFileDb;
+    String fileUrl;
+	Uri fileUrlL;
+	ArrayList<CsvModel> csvModelArrayList;
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
@@ -65,7 +97,34 @@ public class SendSMSActivity extends AppCompatActivity {
 	}
 
 	public void initViews() {
-
+     
+	launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+				            public void onActivityResult(ActivityResult activityResult) {
+					                if (activityResult != null) {
+						                    Intent data = activityResult.getData();
+											fileUrl=data.toString();
+											fileUrlL=data.getData();
+						                    SendSMSActivity sendSMSActivity = SendSMSActivity.this;
+					                    StringBuilder stringBuilder = new StringBuilder();
+					                    stringBuilder.append("not null url");
+						                    stringBuilder.append(data.toString());
+					                    //Toast.makeText(sendSMSActivity, stringBuilder.toString(), Toast.LENGTH_LONG).show();
+										getCvsFile();
+				                }
+			            }
+		     });
+		
+		
+		
+		
+		
+		saveFileList = new ArrayList<>();
+		/*	sharedPref=this.getSharedPreferences("com.exanple.bulksms",Context.MODE_PRIVATE);
+			if(!sharedPref.getString("savedFile",null).equals(null)){
+			loadSavedFile();
+			}*/
+		storeSaveFileDb = new StoreSaveFileDb(this);
+		saveFileList = storeSaveFileDb.getAllSavedFilesData();
 		registerId = (CheckBox) findViewById(R.id.registerId);
 		registeredId = (EditText) findViewById(R.id.editTextId);
 		receiptNum = (EditText) findViewById(R.id.editTextRep);
@@ -77,7 +136,8 @@ public class SendSMSActivity extends AppCompatActivity {
 		saveC = (CheckBox) findViewById(R.id.saveC);
 		sendLaterC = (CheckBox) findViewById(R.id.sendLaterC);
 		useNormalRoute = (CheckBox) findViewById(R.id.useNormalRC);
-		//registerId();
+		getSavedFileC = findViewById(R.id.getsaveC);
+		//registerId()d
 		pages.setText("0");
 		registerId.setOnClickListener(v -> {
 			if (registerId.isChecked() == true) {
@@ -87,56 +147,97 @@ public class SendSMSActivity extends AppCompatActivity {
 		});
 		checkWrongWords(smsEdit);
 		verifyId(registeredId);
-		useNormalRoute.setOnClickListener(v->{
-			if(useNormalRoute.isChecked()){
-			 isNormalRChecked=true;
-			 routeChoosed=2;
-			 
+		useNormalRoute.setOnClickListener(v -> {
+			if (useNormalRoute.isChecked()) {
+				isNormalRChecked = true;
+				routeChoosed = 2;
+
 			}
-			
-			corporateC.setOnClickListener(p ->{
-				if(corporateC.isChecked()){
-					isCChecked=true;
-					routeChoosed=4;
+
+			corporateC.setOnClickListener(p -> {
+				if (corporateC.isChecked()) {
+					isCChecked = true;
+					routeChoosed = 4;
 				}
 			});
 		});
-		buttonSms.setOnClickListener(v->{
-			if(isNormalRChecked==true && isCChecked==true){
+		buttonSms.setOnClickListener(v -> {
+			if (isNormalRChecked == true && isCChecked == true) {
 				useNormalRoute.setChecked(false);
 				corporateC.setChecked(false);
-				isNormalRChecked=false;
-				isCChecked=false;
-				
-				routeChoosed=0;
-				Toast.makeText(SendSMSActivity.this,"pick one route",Toast.LENGTH_LONG).show();
+				isNormalRChecked = false;
+				isCChecked = false;
+
+				routeChoosed = 0;
+				Toast.makeText(SendSMSActivity.this, "pick one route", Toast.LENGTH_LONG).show();
 				return;
-				
+
 			}
-			if(registeredId.getText().toString().isEmpty()==true){
-				Toast.makeText(SendSMSActivity.this,"id empty",Toast.LENGTH_LONG).show();
-				return;
-			}
-			if(receiptNum.getText().toString().isEmpty()==true){
-				Toast.makeText(SendSMSActivity.this,"number empty",Toast.LENGTH_LONG).show();
+			if (registeredId.getText().toString().isEmpty() == true) {
+				Toast.makeText(SendSMSActivity.this, "id empty", Toast.LENGTH_LONG).show();
 				return;
 			}
-			if(smsEdit.getText().toString().isEmpty()==true){
-				Toast.makeText(SendSMSActivity.this,"message empty",Toast.LENGTH_LONG).show();
+			if (receiptNum.getText().toString().isEmpty() == true && bulkEdit.getText().toString().isEmpty()==true) {
+				Toast.makeText(SendSMSActivity.this, "number empty", Toast.LENGTH_LONG).show();
 				return;
 			}
-			sendMessage(registeredId.getText().toString(),receiptNum.getText().toString(),smsEdit.getText().toString(),String.valueOf(routeChoosed));
+			if (smsEdit.getText().toString().isEmpty() == true) {
+				Toast.makeText(SendSMSActivity.this, "message empty", Toast.LENGTH_LONG).show();
+				return;
+			}
+			if(receiptNum.getText().toString().isEmpty()==false && bulkEdit.getText().toString().isEmpty()==true){
+			sendMessage(registeredId.getText().toString(), receiptNum.getText().toString(),
+					smsEdit.getText().toString(), String.valueOf(routeChoosed));
+		}else if(bulkEdit.getText().toString().isEmpty()==false && receiptNum.getText().toString().isEmpty()==true){
+			sendMessage(registeredId.getText().toString(), bulkEdit.getText().toString(),
+			smsEdit.getText().toString(), String.valueOf(routeChoosed));
+		}else{
+			Toast.makeText(SendSMSActivity.this, "please pick one either bulk number or single number root", Toast.LENGTH_LONG).show();
+		}			
+		});
+
+		saveC.setOnClickListener(v -> {
+			if (saveC.isChecked()) {
+				initSaveDialog();
+
+			}
+		});
+
+		getSavedFileC.setOnClickListener(v -> {
+			if (getSavedFileC.isChecked() == true) {
+				initFileSavedDialog();
+			}
 		});
 		
+		bulkEdit.setOnClickListener(v->{
+			if(ContextCompat.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE)!=PackageManager.PERMISSION_GRANTED){
+				ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},1);
+			}else{
+			Intent intent = new Intent("android.intent.action.OPEN_DOCUMENT");
+			 intent.setType("*/*");
+			 intent.addCategory("android.intent.category.OPENABLE");
+			launcher.launch(intent);
+			}
+			
+		}); 
+		
+		sendLaterC.setOnClickListener(v->{
+			setTimePickerDialog();
+		});
+
 		//saveC.setOnClickListener(new SendSMSActivity$$ExternalSyntheticLambda0(this));
 		//useNormalRoute.setOnClickListener(new SendSMSActivity$$ExternalSyntheticLambda1(this));
 		//corporateC.setOnClickListener(new SendSMSActivity$$ExternalSyntheticLambda2(this));
 		//buttonSms.setOnClickListener(new SendSMSActivity$$ExternalSyntheticLambda3(this));
 
 	}
-
+  public void setTimePickerDialog(){
+	  Dialog  timePickerDialog=new Dialog(this);
+	  timePickerDialog.setContentView(R.layout.sendlaterlayout);
+	  timePickerDialog.show();
+  }
 	public void showDialog() {
-		 dialog = new Dialog(SendSMSActivity.this);
+		dialog = new Dialog(SendSMSActivity.this);
 
 		dialog.setContentView(R.layout.dialog_activity_send);
 		EditText editText = (EditText) dialog.findViewById(R.id.regIdDialog);
@@ -145,7 +246,7 @@ public class SendSMSActivity extends AppCompatActivity {
 		EditText editText4 = (EditText) dialog.findViewById(R.id.govIdDialog);
 		EditText editText5 = (EditText) dialog.findViewById(R.id.buAddressDialog);
 		Button button = (Button) dialog.findViewById(R.id.registerButtonDialog);
-		
+
 		dialog.findViewById(R.id.cancelDialog).setOnClickListener(v -> {
 			dialog.cancel();
 		});
@@ -186,10 +287,9 @@ public class SendSMSActivity extends AppCompatActivity {
 	}
 
 	public void verifyId(final EditText editText) {
-		editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(10)});
-		listener=editText.getKeyListener();	
-			
-			
+		editText.setFilters(new InputFilter[] { new InputFilter.LengthFilter(10) });
+		listener = editText.getKeyListener();
+
 		editText.addTextChangedListener(new TextWatcher() {
 
 			@Override
@@ -199,7 +299,7 @@ public class SendSMSActivity extends AppCompatActivity {
 			@Override
 			public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
 				editText.setBackgroundResource(R.drawable.send_sms_design);
-			//	editText.setKeyListener(editText.getKeyListener());
+				//	editText.setKeyListener(editText.getKeyListener());
 			}
 
 			@Override
@@ -222,7 +322,7 @@ public class SendSMSActivity extends AppCompatActivity {
 				}
 				SendSMSActivity.this.isIdValidWord = true;
 				if (editable.length() > 10) {
-					
+
 					Toast.makeText(SendSMSActivity.this, "character greater than 10", 1).show();
 					return;
 				}
@@ -232,19 +332,18 @@ public class SendSMSActivity extends AppCompatActivity {
 				}
 			}
 		});
-		
-		
-		
-		
+
 	}
-    public  void startListening(EditText editText){
-		editText.setOnClickListener(v->{
+
+	public void startListening(EditText editText) {
+		editText.setOnClickListener(v -> {
 			editText.setKeyListener(listener);
 		});
 	}
-	public void checkWrongWords( EditText editText) {
-		editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(600)});
-		listener=editText.getKeyListener();
+
+	public void checkWrongWords(EditText editText) {
+		editText.setFilters(new InputFilter[] { new InputFilter.LengthFilter(600) });
+		listener = editText.getKeyListener();
 		editText.addTextChangedListener(new TextWatcher() {
 			@Override
 			public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
@@ -321,19 +420,19 @@ public class SendSMSActivity extends AppCompatActivity {
 	public void saveText() {
 		//	SaveMessageClass saveMessageClass = new SaveMessageClass();
 		/*	Editor edit = this.sharedPref.edit();
-			if ((TextUtils.isEmpty(this.registeredId.getText().toString())
-					& TextUtils.isEmpty(this.smsEdit.getText().toString())) == 0) {
-				saveMessageClass.setId(this.registeredId.getText().toString());
-				saveMessageClass.setMessage(this.smsEdit.getText().toString());
-				saveMessageClass.setRecipient(this.receiptNum.getText().toString());
-				edit.putString("id", saveMessageClass.getId());
-				edit.putString("message", saveMessageClass.getMessage());
-				edit.putString("repNum", saveMessageClass.getRecipient());
-				edit.putBoolean("isWordSaved", true);
-				edit.commit();
-				Toast.makeText(this, "messages saved", 1).show();
-			}
-			*/
+		if ((TextUtils.isEmpty(this.registeredId.getText().toString())
+		& TextUtils.isEmpty(this.smsEdit.getText().toString())) == 0) {
+			saveMessageClass.setId(this.registeredId.getText().toString());
+			saveMessageClass.setMessage(this.smsEdit.getText().toString());
+			saveMessageClass.setRecipient(this.receiptNum.getText().toString());
+			edit.putString("id", saveMessageClass.getId());
+			edit.putString("message", saveMessageClass.getMessage());
+			edit.putString("repNum", saveMessageClass.getRecipient());
+			edit.putBoolean("isWordSaved", true);
+			edit.commit();
+			Toast.makeText(this, "messages saved", 1).show();
+		}
+		*/
 	}
 
 	public void getSaveWords() {
@@ -345,24 +444,24 @@ public class SendSMSActivity extends AppCompatActivity {
 		smsEdit.setText(string2);
 		receiptNum.setText(str);
 	}
-	public  void sendMessage(String id,String rep,String message,String rout){
-		apiClient.getWebApi().sendSmSResponseCall(apiKey,id,rep,message,"0",rout).enqueue(new Callback<SendSmSResponse>(){
-			@Override
-			public void onResponse(Call<SendSmSResponse> arg0, Response<SendSmSResponse> arg1) {
-				StringBuilder builder=new StringBuilder();
-				builder.append(arg1.body().getComment());
-				showSuccessIDRegDialog("MESSAGE STATUS","success:"+" "+builder.toString());
-			}
 
-			@Override
-			public void onFailure(Call<SendSmSResponse> arg0, Throwable arg1) {
-				showSuccessIDRegDialog("MESSAGE STATUS",arg1.getMessage() +"error");
-			
-			
-			
-			}
-			
-		});
+	public void sendMessage(String id, String rep, String message, String rout) {
+		apiClient.getWebApi().sendSmSResponseCall(apiKey, id, rep, message, "0", rout)
+				.enqueue(new Callback<SendSmSResponse>() {
+					@Override
+					public void onResponse(Call<SendSmSResponse> arg0, Response<SendSmSResponse> arg1) {
+						StringBuilder builder = new StringBuilder();
+						builder.append(arg1.body().getComment());
+						showSuccessIDRegDialog("MESSAGE STATUS", "success:" + " " + builder.toString());
+					}
+
+					@Override
+					public void onFailure(Call<SendSmSResponse> arg0, Throwable arg1) {
+						showSuccessIDRegDialog("MESSAGE STATUS", arg1.getMessage() + "error");
+
+					}
+
+				});
 	}
 
 	public void RegisterIdKey(String str, String str2, String str3, String str4, String str5) {
@@ -376,10 +475,10 @@ public class SendSMSActivity extends AppCompatActivity {
 						//stringBuilder.append(response.body().getSuccessResponse());
 						stringBuilder.append(response.body().getComment());
 						//stringBuilder.append("success");
-				//	Toast.makeText(SendSMSActivity.this, stringBuilder.toString(), Toast.LENGTH_LONG).show();
+						//	Toast.makeText(SendSMSActivity.this, stringBuilder.toString(), Toast.LENGTH_LONG).show();
 						dialog.cancel();
 						registeredId.setText(id);
-                      showSuccessIDRegDialog("ID Registration ",stringBuilder.toString());
+						showSuccessIDRegDialog("ID Registration ", stringBuilder.toString());
 					}
 
 					@Override
@@ -388,18 +487,176 @@ public class SendSMSActivity extends AppCompatActivity {
 					}
 				});
 	}
-	
-	public void showSuccessIDRegDialog(String title,String comment){
-		
-		AlertDialog.Builder idDialog=new AlertDialog.Builder(SendSMSActivity.this);
+
+	public void showSuccessIDRegDialog(String title, String comment) {
+
+		AlertDialog.Builder idDialog = new AlertDialog.Builder(SendSMSActivity.this);
 		idDialog.setTitle(title);
 		idDialog.setMessage(comment);
-		idDialog.setPositiveButton("Ok",new DialogInterface.OnClickListener(){
+		idDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 			@Override
-			public  void onClick(DialogInterface dialog,int which){
+			public void onClick(DialogInterface dialog, int which) {
 				dialog.cancel();
-				}
+			}
 		});
 		idDialog.create().show();
 	}
+
+	public void initFileSavedDialog() {
+		openSavedFileDialog = new Dialog(this);
+		openSavedFileDialog.setContentView(R.layout.saveditemlayout);
+		ArrayList<SaveFileClass> updatedFile = storeSaveFileDb.getAllSavedFilesData();
+		Button deleteB, useB;
+		deleteB = openSavedFileDialog.findViewById(R.id.deleteSaveF);
+		useB = openSavedFileDialog.findViewById(R.id.useSaveF);
+
+		ListView listView = openSavedFileDialog.findViewById(R.id.listSavedFile);
+		SaveItemAdapter adapter = new SaveItemAdapter(this, updatedFile);
+		deleteB.setOnClickListener(v -> {
+			deleteSaveFile(adapter, updatedFile);
+
+		});
+		useB.setOnClickListener(v -> {
+			getSavedFile(updatedFile);
+			openSavedFileDialog.cancel();
+		});
+		listView.setAdapter(adapter);
+		openSavedFileDialog.show();
+	}
+
+	public void loadSavedFile() {
+
+		/*	String savedFile=sharedPref.getString("savedFile",null);
+			Gson gson=new Gson();
+			Type type=new TypeToken<ArrayList<SaveFileClass>>() {}.getType();
+				saveF=saveF=gson.fromJson(savedFile,type);*/
+		
+	}
+
+	public void initSaveDialog() {
+		openSaveDialog = new Dialog(this);
+		openSaveDialog.setContentView(R.layout.savelayout_dialog);
+		Button cancel, saveB;
+		EditText fileName;
+		cancel = openSaveDialog.findViewById(R.id.cancelSD);
+		saveB = openSaveDialog.findViewById(R.id.saveFileB);
+		fileName = openSaveDialog.findViewById(R.id.nameSave);
+		cancel.setOnClickListener(v -> {
+			saveC.setChecked(false);
+			openSaveDialog.cancel();
+
+		});
+		saveB.setOnClickListener(v -> {
+			saveAllFiles(fileName);
+		});
+		openSaveDialog.show();
+	}
+
+	public void saveAllFiles(EditText fileN) {
+		String fileName = fileN.getText().toString();
+		String idN = registeredId.getText().toString();
+		String repNN = receiptNum.getText().toString();
+		String smsN = smsEdit.getText().toString();
+		String multRep=bulkEdit.getText().toString();
+		long sc=storeSaveFileDb.addSavedFile(idN, repNN, multRep, smsN, fileName);
+		if(sc>0)
+		openSaveDialog.cancel();
+
+	}
+
+	public void deleteSaveFile(SaveItemAdapter adapter, ArrayList<SaveFileClass> updatedFile) {
+		int position = SaveItemAdapter.fPosition;
+		boolean checked = SaveItemAdapter.isChecked;
+		if (checked == false) {
+			Toast.makeText(this, "no file seleted", Toast.LENGTH_LONG).show();
+			return;
+		}
+		int resp = storeSaveFileDb.deleteFile(updatedFile.get(position).getFileName());
+		if (resp > 0)
+			adapter.removeItem(position);
+
+	}
+
+	public void getSavedFile(ArrayList<SaveFileClass> updatedList) {
+		int position = SaveItemAdapter.fPosition;
+		boolean checked = SaveItemAdapter.isChecked;
+		if (checked == false) {
+			Toast.makeText(this, "no file seleted", Toast.LENGTH_LONG).show();
+			return;
+		}
+
+		String id = updatedList.get(position).getid();
+		String recep = updatedList.get(position).getRecipient();
+		String multRep = updatedList.get(position).getMultiRecipiet();
+		String message = updatedList.get(position).getMessage();
+	//	Toast.makeText(this,message,Toast.LENGTH_LONG).show();
+
+		if (id.isEmpty()) {
+			registeredId.setText("");
+		} else {
+			registeredId.setText(id);
+		}
+
+		if (recep.isEmpty()) {
+			receiptNum.setText("");
+		} else {
+			receiptNum.setText(recep);
+		}
+
+		if (multRep.isEmpty()) {
+			bulkEdit.setText("");
+
+		} else {
+          bulkEdit.setText(multRep);
+		}
+		
+
+		if (message.isEmpty()) {
+			smsEdit.setText("");
+		} else {
+			smsEdit.setText(message);
+		}
+
+	}
+	
+	
+	public void getCvsFile(){
+		File file=new File(fileUrl);
+	if(!fileUrl.contains(".csv")){
+		Toast.makeText(this,"not csv file",Toast.LENGTH_LONG).show();
+		return;
+	}
+	try{
+	InputStream input=getContentResolver().openInputStream(fileUrlL);
+	File f=CSVClass.getFileFromInputStrean(input);
+	
+csvModelArrayList=CSVClass.getCsvData(f,this);
+//Toast.makeText(this,csvModelArrayList.get(0).getPhoneNumbers(),Toast.LENGTH_LONG).show();
+StringBuilder builder=new StringBuilder();
+new Thread(new Runnable(){
+	@Override
+	public void  run(){
+		for(int i=0;i<csvModelArrayList.size();i++){
+			builder.append(csvModelArrayList.get(i).getPhoneNumbers());
+			
+				if(i!=csvModelArrayList.size()-1){
+			builder.append(",");
+			}
+		}
+		
+     runOnUiThread(new Runnable(){
+		 @Override
+		 public void run(){
+			 bulkEdit.setText(builder.toString());
+		 }
+	 });
+	}
+}).start();
+	
+
+	}catch(Exception e){
+		Toast.makeText(this,e.toString(),Toast.LENGTH_LONG).show();
+	}
+	
+		}
 }
